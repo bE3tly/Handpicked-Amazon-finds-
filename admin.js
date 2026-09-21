@@ -41,20 +41,38 @@ async function renderDashboard(user) {
     </div>
     <div class="card" style="margin-top:2rem;">
         <h3>Add Product</h3>
-        <input type="text" id="asin" placeholder="Enter ASIN">
-        <button id="fetch-btn" class="btn">Auto-fetch image</button>
-        <div id="fetch-result"></div>
+        <input type="text" id="title" placeholder="Title">
+        <input type="text" id="category" placeholder="Category">
+        <input type="text" id="whyLike" placeholder="Why Like">
+        <input type="text" id="affiliateLink" placeholder="Affiliate Link">
+        <input type="text" id="imageUrl" placeholder="Image URL (paste snippet/<img> tag here)">
+        <button id="add-btn" class="btn">Add Product</button>
     </div>
   `;
   
-  document.getElementById('fetch-btn').addEventListener('click', async () => {
-      const asin = document.getElementById('asin').value;
-      const res = await fetch('/.netlify/functions/fetch-product', {
-          method: 'POST',
-          body: JSON.stringify({ asin })
-      });
-      const data = await res.json();
-      document.getElementById('fetch-result').innerText = data.error || data.message;
+  document.getElementById('imageUrl').addEventListener('blur', (e) => {
+      const val = e.target.value;
+      if (val.includes('<img')) {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(val, 'text/html');
+          const img = doc.querySelector('img');
+          if (img) e.target.value = img.src;
+      }
+  });
+
+  document.getElementById('add-btn').addEventListener('click', async () => {
+      const p = {
+          title: document.getElementById('title').value,
+          category: document.getElementById('category').value,
+          whyLike: document.getElementById('whyLike').value,
+          affiliateLink: document.getElementById('affiliateLink').value,
+          imageUrl: document.getElementById('imageUrl').value,
+          createdAt: new Date(),
+          published: true
+      };
+      const { addDoc } = await import("https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js");
+      await addDoc(productsCol, p);
+      renderDashboard(user);
   });
   
   document.getElementById('delete-demo')?.addEventListener('click', async () => {
