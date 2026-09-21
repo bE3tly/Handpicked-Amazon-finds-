@@ -30,7 +30,7 @@ export function AdminView() {
     );
   }
 
-  if (user.email !== "frankgeorge2u@gmail.com") {
+  if (user.email !== "frank2006george@gmail.com") {
     signOut(auth);
     return (
         <div className="hero">
