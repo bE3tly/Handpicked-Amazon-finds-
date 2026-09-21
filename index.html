@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Handpicked Finds</title>
+    <meta name="description" content="A premium affiliate product discovery website." />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <div class="logo">
+          <span class="logo-icon">👜</span>
+          <span class="logo-text">Handpicked Finds</span>
+        </div>
+        <input type="text" class="search-bar" placeholder="Search products...">
+      </header>
+      <p class="disclosure-header">As an Amazon Associate, I earn from qualifying purchases.</p>
+      
+      <div id="categories" class="category-chips">
+        <span class="category-chip active" data-category="All">All</span>
+        <span class="category-chip" data-category="Home">Home</span>
+        <span class="category-chip" data-category="Kitchen">Kitchen</span>
+        <span class="category-chip" data-category="Electronics">Electronics</span>
+        <span class="category-chip" data-category="Beauty">Beauty</span>
+        <span class="category-chip" data-category="Toys">Toys</span>
+        <span class="category-chip" data-category="Health">Health</span>
+      </div>
+
+      <div class="trust-strip">Hand-picked · Honestly reviewed · Updated weekly</div>
+
+      <section id="top-picks">
+        <h2>Top Picks</h2>
+        <div id="top-picks-grid" class="products-grid"></div>
+      </section>
+      
+      <section id="all-products">
+        <h2>All Finds</h2>
+        <div id="all-products-grid" class="products-grid"></div>
+      </section>
+
+      <section class="about-section">
+        <h2>How we choose products</h2>
+        <p>We research thousands of items, test for real-world utility, and curate only the best for you.</p>
+        <a href="#">About us</a>
+      </section>
+
+      <footer class="footer">
+        <p class="footer-disclosure">Affiliate Disclosure: As an Amazon Associate I earn from qualifying purchases.</p>
+      </footer>
+    </div>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
+

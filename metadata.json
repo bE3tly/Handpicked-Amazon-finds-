@@ -1,0 +1,6 @@
+{
+  "name": "Handpicked Finds",
+  "description": "A premium affiliate product discovery website.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

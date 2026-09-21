@@ -1,11 +1,8 @@
-<div align="center">
+# Handpicked Finds - Setup
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-
-  <h1>Built with AI Studio</h2>
-
-  <p>The fastest path from prompt to production with Gemini.</p>
-
-  <a href="https://aistudio.google.com/apps">Start building</a>
-
-</div>
+1.  **Firebase Project**: Ensure your Firebase project has Firestore and Google Authentication enabled.
+2.  **Firebase Rules**: Configure your Firestore rules to allow only authorized users (e.g., your email) to write to the `products` collection.
+3.  **Netlify Function**:
+    *   Deploy the `netlify/functions/fetch-product.js` function to Netlify.
+    *   Set the `AMAZON_ACCESS_KEY`, `AMAZON_SECRET_KEY`, and `AMAZON_PARTNER_TAG` environment variables in your Netlify dashboard.
+4.  **Hosting**: You can host this static site on Firebase Hosting or any other static site hosting provider.
