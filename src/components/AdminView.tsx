@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import firebaseConfig from "../../firebase-config.js";
+import { Dashboard } from './Dashboard';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
 
 export function AdminView() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
@@ -20,18 +22,14 @@ export function AdminView() {
     });
   }, []);
 
-  const handleSignIn = async () => {
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
     setErrorMsg("");
     try {
-      const result = await signInWithPopup(auth, provider);
-      console.log("SignInWithPopup success, email:", result.user.email);
+      await signInWithEmailAndPassword(auth, email, password);
     } catch (error: any) {
-      console.error("Popup sign-in error:", error);
-      if (error.code === 'auth/popup-blocked') {
-        setErrorMsg("Sign-in popup was blocked. Please allow popups for this site and try again.");
-      } else {
-        setErrorMsg(`Error: ${error.code} - ${error.message}`);
-      }
+      console.error("Sign-in error:", error);
+      setErrorMsg(`Error ${error.code}: ${error.message}`);
     }
   };
 
@@ -41,19 +39,12 @@ export function AdminView() {
     return (
         <div className="hero">
             <h1>Admin Login</h1>
-            <button onClick={handleSignIn} className="btn">Sign in with Google</button>
-            {errorMsg && <p style={{ color: 'red' }}>{errorMsg}</p>}
-        </div>
-    );
-  }
-
-  if (user.email !== "frank2006george@gmail.com") {
-    signOut(auth);
-    return (
-        <div className="hero">
-            <h1>Access denied</h1>
-            <p>Signed in as: {user.email}</p>
-            <button onClick={() => location.reload()} className="btn">Back to Login</button>
+            <form onSubmit={handleSignIn} className="flex flex-col gap-4">
+                <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required className="p-2 border" />
+                <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required className="p-2 border" />
+                <button type="submit" className="btn">Sign In</button>
+            </form>
+            {errorMsg && <p style={{ color: 'red' }} className="mt-4">{errorMsg}</p>}
         </div>
     );
   }
@@ -64,8 +55,11 @@ export function AdminView() {
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <div>
-        <header><h1>Dashboard</h1><button onClick={() => signOut(auth)} className="btn">Logout</button></header>
-        {/* Rest of dashboard content */}
+        <header className="flex justify-between p-4 border-b">
+            <h1>Dashboard</h1>
+            <button onClick={() => signOut(auth)} className="btn">Logout</button>
+        </header>
+        <Dashboard />
       </div>
     </>
   );
