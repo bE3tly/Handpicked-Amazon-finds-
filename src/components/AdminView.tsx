@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 import firebaseConfig from "../../firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
@@ -14,26 +14,26 @@ export function AdminView() {
   const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
-    // 1. Handle redirect result
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result?.user) {
-          console.log("Result email:", result.user.email);
-        }
-      })
-      .catch((error) => {
-        console.error("Redirect error:", error);
-      });
-
-    // 2. Auth listener
     return onAuthStateChanged(auth, (u) => {
-      if (u) {
-        console.log("AuthStateChanged email:", u.email);
-      }
       setUser(u);
       setLoading(false);
     });
   }, []);
+
+  const handleSignIn = async () => {
+    setErrorMsg("");
+    try {
+      const result = await signInWithPopup(auth, provider);
+      console.log("SignInWithPopup success, email:", result.user.email);
+    } catch (error: any) {
+      console.error("Popup sign-in error:", error);
+      if (error.code === 'auth/popup-blocked') {
+        setErrorMsg("Sign-in popup was blocked. Please allow popups for this site and try again.");
+      } else {
+        setErrorMsg(`Error: ${error.code} - ${error.message}`);
+      }
+    }
+  };
 
   if (loading) return <div>Checking sign-in...</div>;
 
@@ -41,7 +41,8 @@ export function AdminView() {
     return (
         <div className="hero">
             <h1>Admin Login</h1>
-            <button onClick={() => signInWithRedirect(auth, provider)} className="btn">Sign in with Google</button>
+            <button onClick={handleSignIn} className="btn">Sign in with Google</button>
+            {errorMsg && <p style={{ color: 'red' }}>{errorMsg}</p>}
         </div>
     );
   }
