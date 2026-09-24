@@ -13,13 +13,24 @@ export function PublicView() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const q = query(collection(db, 'products'));
     return onSnapshot(q, (snapshot) => {
       const prods = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product));
       setProducts(prods);
+      setLoading(false);
     });
   }, []);
+
+  const ProductCardSkeleton = () => (
+    <div className="bg-white rounded-2xl p-4 animate-pulse">
+        <div className="aspect-square bg-gray-200 rounded-xl mb-3"></div>
+        <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+        <div className="h-10 bg-gray-200 rounded-lg w-full"></div>
+    </div>
+  );
 
   const categories = ["All", "Home", "Toys", "Electronics", "Kitchen", "Beauty", "Health"];
 
@@ -96,14 +107,28 @@ export function PublicView() {
       </div>
 
       <section className="px-4">
-        <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">Top Picks 🔥</h2>
-        <div className="grid grid-cols-2 gap-3 mb-8">
-          {topPicks.map(p => <ProductCard key={p.id} product={p} />)}
-        </div>
+        {loading ? (
+            <div className="grid grid-cols-2 gap-3 mb-8">
+                <ProductCardSkeleton /><ProductCardSkeleton />
+            </div>
+        ) : topPicks.length > 0 && (
+          <>
+            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">Top Picks 🔥</h2>
+            <div className="grid grid-cols-2 gap-3 mb-8">
+              {topPicks.map(p => <ProductCard key={p.id} product={p} />)}
+            </div>
+          </>
+        )}
         
-        <div className="grid grid-cols-2 gap-3">
-          {otherProducts.map(p => <ProductCard key={p.id} product={p} />)}
-        </div>
+        {loading ? (
+            <div className="grid grid-cols-2 gap-3">
+                <ProductCardSkeleton /><ProductCardSkeleton />
+            </div>
+        ) : (
+            <div className="grid grid-cols-2 gap-3">
+              {otherProducts.map(p => <ProductCard key={p.id} product={p} />)}
+            </div>
+        )}
       </section>
       
       <footer className="px-4 py-8 bg-gray-100 text-gray-500 text-xs text-center leading-relaxed">
